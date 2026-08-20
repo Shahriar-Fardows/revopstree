@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 // Runs before first paint so the hero can't flash in fully-formed before GSAP takes over.
 // Opted out entirely for reduced-motion visitors, and self-clears if hydration never happens.
-const paintGuard = `try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches){var e=document.documentElement;e.setAttribute("data-motion","");setTimeout(function(){e.removeAttribute("data-motion")},2500)}}catch(err){}`;
+const paintGuard = `try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches){var e=document.documentElement;e.setAttribute("data-motion","");setTimeout(function(){e.removeAttribute("data-motion")},5000)}}catch(err){}`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

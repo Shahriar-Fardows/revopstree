@@ -1,4 +1,4 @@
-import MotionSystem from "./motion-system";
+import MotionLoader from "./motion-loader";
 
 const services = [
   { n: "01", title: "Elite CRM Architecture", text: "A complete lead journey from opt-in to closed-won — built, migrated, and optimized inside your CRM.", tags: ["CRM migration", "Sales pipelines", "Booking systems"] },
@@ -23,7 +23,7 @@ const Check = () => <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 10 4
 export default function Home() {
   return (
     <main>
-      <MotionSystem />
+      <MotionLoader />
       <section className="hero" id="home">
         <nav className="nav shell">
           <a className="brand" href="#home" aria-label="RevopsTree home">
@@ -50,7 +50,7 @@ export default function Home() {
         <div className="hero-grid shell">
           <div className="hero-copy">
             <div className="eyebrow"><span className="pulse" /> REVOPS INFRASTRUCTURE FOR AMBITIOUS AGENCIES</div>
-            <h1>Stop fighting your tech stack. <em>Automate your revenue.</em></h1>
+            <h1><span>Stop fighting your tech stack. </span><em>Automate your revenue.</em></h1>
             <p className="hero-lead">We design, migrate, and automate your entire business backend — connecting every tool so you can focus on scaling, not troubleshooting.</p>
             <div className="hero-actions">
               <a className="button" href="#contact">Claim your free revenue leak audit <Arrow /></a>
