@@ -1,4 +1,6 @@
 import MotionLoader from "./motion-loader";
+import BookingSection from "./booking-section";
+
 
 const services = [
   { n: "01", symbol: "⌘", title: "Elite CRM Architecture", text: "A complete lead journey from opt-in to closed-won — built, migrated, and optimized inside your CRM.", tags: ["CRM migration", "Sales pipelines", "Booking systems"] },
@@ -179,7 +181,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="cta section" id="contact"><div className="cta-orbit"><i/><i/><i/></div><div className="shell"><span className="kicker light">YOUR NEXT SYSTEM STARTS HERE</span><h2>Ready to turn your agency<br/>into a <em>revenue machine?</em></h2><p>Book a free Revenue Leak Audit. We&apos;ll map the bottlenecks in your stack and show you exactly what to automate first.</p><div className="promise"><strong>30 DAYS</strong><span />TO A ZERO-LEAKAGE REVENUE ENGINE</div><a className="button button-white" href="mailto:hello@revopstree.com">Book Free Call <Arrow /></a><small>NO PITCH. JUST A CLEAR TECHNICAL ROADMAP.</small></div></section>
+      <BookingSection />
 
       <footer><div className="shell footer-grid"><div><a className="brand footer-brand" href="#home"><span className="brand-mark"><i/><i/><i/></span><span>REVOPS<span>TREE</span></span></a><p>Your brand. Our tech.<br/>Revenue infrastructure built to scale.</p></div><div><small>EXPLORE</small><a href="#services">Services</a><a href="#engine">The Engine</a><a href="#case-studies">Case Studies</a><a href="#process">Process</a><a href="#blog">Blog</a></div><div><small>CONNECT</small><a href="mailto:hello@revopstree.com">hello@revopstree.com</a><a href="#contact">Book a Call</a></div></div><div className="shell footer-bottom"><span>REVOPSTREE © 2026</span><div><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">A2P 10DLC</a></div></div></footer>
     </main>
