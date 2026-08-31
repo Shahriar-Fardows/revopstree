@@ -276,7 +276,6 @@ export default function MotionSystem() {
                 { scaleY: 0, transformOrigin: "bottom", stagger: 0.04, duration: 0.75, ease: "power3.out" },
                 0.9,
               )
-              .from(".flow-card", { opacity: 0, y: 18, scale: 0.94, duration: 0.7, ease: "back.out(1.4)" }, 0.98)
               .from(".float-stat", { opacity: 0, x: 22, scale: 0.9, duration: 0.7, ease: "back.out(1.4)" }, 1.08)
               .from(".trust > *", { opacity: 0, y: 14, stagger: 0.05, duration: 0.7 }, 1.04);
 
@@ -292,13 +291,6 @@ export default function MotionSystem() {
            * 2. Ambient loops
            * ---------------------------------------------------------------- */
 
-          whileVisible(
-            ".hero-visual",
-            gsap
-              .timeline({ repeat: -1, repeatDelay: 1.6, delay: 2 })
-              .to(".flow b", { scale: 1.09, y: -2, duration: 0.28, stagger: 0.13, ease: "power2.out" })
-              .to(".flow b", { scale: 1, y: 0, duration: 0.35, stagger: 0.13, ease: "power2.inOut" }, 0.2),
-          );
 
           whileVisible(
             ".hero-visual",
