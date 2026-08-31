@@ -1,10 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Script from "next/script";
 
 export default function BookingSection() {
   const [activeTab, setActiveTab] = useState<"calendar" | "form">("calendar");
+
+  useEffect(() => {
+    // Ensure LeadConnector form_embed script initializes on client mount & reload
+    if (typeof window !== "undefined") {
+      const scriptId = "leadconnector-form-script";
+      if (!document.getElementById(scriptId)) {
+        const script = document.createElement("script");
+        script.id = scriptId;
+        script.src = "https://link.msgsndr.com/js/form_embed.js";
+        script.async = true;
+        document.body.appendChild(script);
+      }
+    }
+  }, []);
 
   return (
     <section className="cta section" id="contact">
@@ -55,84 +69,82 @@ export default function BookingSection() {
           </button>
         </div>
 
-        {/* Embed Card Container */}
+        {/* Embed Card Container - Both panes persist in DOM so scripts initialize on reload */}
         <div className="booking-embed-card">
-          {activeTab === "calendar" && (
-            <div
-              id="pane-calendar"
-              role="tabpanel"
-              aria-labelledby="tab-calendar"
-              className="booking-pane"
-            >
-              <div className="pane-header">
-                <h3>Select Date &amp; Time for Your Free Audit</h3>
-                <a
-                  href="https://api.leadconnectorhq.com/widget/bookings/new/appointmnet/for/faseeh/ejaz"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="external-link-btn"
-                >
-                  Open Calendar in New Tab ↗
-                </a>
-              </div>
-              <div className="iframe-wrapper">
-                <iframe
-                  src="https://api.leadconnectorhq.com/widget/bookings/new/appointmnet/for/faseeh/ejaz"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    minHeight: "680px",
-                    border: "none",
-                    borderRadius: "12px",
-                    background: "#ffffff"
-                  }}
-                  id="msgsndr-calendar"
-                  title="Revops Booking Calendar"
-                />
-              </div>
+          <div
+            id="pane-calendar"
+            role="tabpanel"
+            aria-labelledby="tab-calendar"
+            className="booking-pane"
+            style={{ display: activeTab === "calendar" ? "flex" : "none" }}
+          >
+            <div className="pane-header">
+              <h3>Select Date &amp; Time for Your Free Audit</h3>
+              <a
+                href="https://api.leadconnectorhq.com/widget/bookings/new/appointmnet/for/faseeh/ejaz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="external-link-btn"
+              >
+                Open Calendar in New Tab ↗
+              </a>
             </div>
-          )}
+            <div className="iframe-wrapper">
+              <iframe
+                src="https://api.leadconnectorhq.com/widget/bookings/new/appointmnet/for/faseeh/ejaz"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  minHeight: "680px",
+                  border: "none",
+                  borderRadius: "12px",
+                  background: "#ffffff"
+                }}
+                id="msgsndr-calendar"
+                title="Revops Booking Calendar"
+              />
+            </div>
+          </div>
 
-          {activeTab === "form" && (
-            <div
-              id="pane-form"
-              role="tabpanel"
-              aria-labelledby="tab-form"
-              className="booking-pane"
-            >
-              <div className="pane-header">
-                <h3>Submit Your System Audit Details</h3>
-              </div>
-              <div className="iframe-wrapper">
-                <iframe
-                  src="https://api.leadconnectorhq.com/widget/form/yyf6C2PISiv5skdPanOn"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    minHeight: "620px",
-                    border: "none",
-                    borderRadius: "12px",
-                    background: "#ffffff"
-                  }}
-                  id="inline-yyf6C2PISiv5skdPanOn"
-                  data-layout="{'id':'INLINE'}"
-                  data-trigger-type="alwaysShow"
-                  data-trigger-value=""
-                  data-activation-type="alwaysActivated"
-                  data-activation-value=""
-                  data-deactivation-type="neverDeactivate"
-                  data-deactivation-value=""
-                  data-form-name="Revops Form"
-                  data-height="597"
-                  data-layout-iframe-id="inline-yyf6C2PISiv5skdPanOn"
-                  data-form-id="yyf6C2PISiv5skdPanOn"
-                  data-cookie-consent="true"
-                  data-cookie-consent-provider="auto"
-                  title="Revops Form"
-                />
-              </div>
+          <div
+            id="pane-form"
+            role="tabpanel"
+            aria-labelledby="tab-form"
+            className="booking-pane"
+            style={{ display: activeTab === "form" ? "flex" : "none" }}
+          >
+            <div className="pane-header">
+              <h3>Submit Your System Audit Details</h3>
             </div>
-          )}
+            <div className="iframe-wrapper">
+              <iframe
+                src="https://api.leadconnectorhq.com/widget/form/yyf6C2PISiv5skdPanOn"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  minHeight: "620px",
+                  border: "none",
+                  borderRadius: "12px",
+                  background: "#ffffff"
+                }}
+                id="inline-yyf6C2PISiv5skdPanOn"
+                data-layout="{'id':'INLINE'}"
+                data-trigger-type="alwaysShow"
+                data-trigger-value=""
+                data-activation-type="alwaysActivated"
+                data-activation-value=""
+                data-deactivation-type="neverDeactivate"
+                data-deactivation-value=""
+                data-form-name="Revops Form"
+                data-height="597"
+                data-layout-iframe-id="inline-yyf6C2PISiv5skdPanOn"
+                data-form-id="yyf6C2PISiv5skdPanOn"
+                data-cookie-consent="true"
+                data-cookie-consent-provider="auto"
+                title="Revops Form"
+              />
+            </div>
+          </div>
         </div>
 
         <small className="cta-note">NO PITCH. JUST A CLEAR TECHNICAL ROADMAP.</small>
