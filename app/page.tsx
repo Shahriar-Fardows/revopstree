@@ -79,6 +79,13 @@ export default function Home() {
 
         <div className="hero-grid shell">
           <div className="hero-copy">
+            <div className="hero-rating">
+              <div className="stars" aria-label="5 out of 5 stars">
+                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+              </div>
+              <span className="rating-score"><strong>5.0</strong></span>
+              <span className="rating-count">• 50+ Founder & Agency Reviews</span>
+            </div>
             <h1><span>Stop fighting your tech stack. </span><em>Automate your revenue.</em></h1>
             <p className="hero-lead">We design, migrate, and automate your entire business backend — connecting every tool so you can focus on scaling, not troubleshooting.</p>
             <div className="hero-actions">
