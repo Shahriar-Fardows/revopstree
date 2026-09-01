@@ -631,11 +631,13 @@ export default function MotionSystem() {
             cta
               .from(".cta .kicker", { y: 24, opacity: 0, duration: 0.8, ease: EASE })
               .from(".cta p", { y: 24, opacity: 0, duration: 0.9, ease: EASE }, 0.45)
-              .from(".cta .button-white", { yPercent: 45, opacity: 0, duration: 0.9, ease: EASE }, 0.55)
-              .from(".cta small", { opacity: 0, duration: 0.8, ease: EASE }, 0.7)
+              .from(".cta .booking-tab-bar", { y: 24, opacity: 0, duration: 0.8, ease: EASE }, 0.55)
+              .from(".cta .booking-embed-card", { y: 30, opacity: 0, duration: 0.9, ease: EASE }, 0.65)
+              .from(".cta .cta-note", { opacity: 0, duration: 0.8, ease: EASE }, 0.8)
               .from(".cta-orbit i", { scale: 0.72, opacity: 0, duration: 1.4, ease: "power3.out", stagger: 0.12 }, 0);
 
             revealHeading(".cta h2", { trigger: enter(".cta", "top 78%"), delay: 0.15 });
+
 
             whileVisible(
               ".cta",
