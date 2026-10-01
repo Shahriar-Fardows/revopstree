@@ -83,11 +83,17 @@ Phase 0 setup — dependency install, `lib/db.ts`, type, Zod schema, index, seed
 | **A10** | Editor অন্যের post-ও edit করতে পারে | ছোট টিমে per-author lock অকারণ ঘর্ষণ। শুধু staff management admin-only |
 | **A11** | Staff delete নয়, `disabled` | Post-এর authorship ভাঙে |
 | **A12** | React Hook Form নয় | Form ছোট; `useActionState` যথেষ্ট (`07 §65`) |
+| **A13** | **এই repo-র package manager pnpm** — npm নয় | Coolify/Railpack `pnpm install --frozen-lockfile` চালায়, আর `pnpm-workspace.yaml`-এ ইচ্ছাকৃত config আছে (`allowBuilds: unrs-resolver: false`)। npm দিয়ে install করলে `pnpm-lock.yaml` পুরনো থেকে যায় আর **deploy fail করে**। `package-lock.json` মুছে ফেলা হয়েছে যাতে ভুলটা আবার না হয় |
+| **A14** | Env check lazy — module scope-এ নয় | `next build` প্রতিটা route module import করে। `lib/db.ts`/`lib/session.ts` module load-এ throw করলে credential ছাড়া build-ই fail করত। এখন throw হয় প্রথম query/sign-এর সময় |
+| **A15** | `/blog` ও `/blog/[slug]` `force-dynamic` | নইলে build-time-এ prerender হতে গিয়ে DB খোঁজে — build container-এ Atlas credential রাখা উচিত নয়, আর post list build-এ জমে যেত |
+| **A16** | `mongodb-memory-server` বাদ | যাচাইয়ের জন্য যোগ করা হয়েছিল (না জিজ্ঞেস করে — ভুল), production build-এ অপ্রয়োজনীয় ওজন। Local dev-এ Atlas ব্যবহার হবে |
 
 ## Known Issues
 
 | মাত্রা | সমস্যা |
 |---|---|
+| 🔴 | **Admin ও blog UI এখনো প্রকৃত DB-তে চালিয়ে দেখা হয়নি** — login screen ও marketing homepage যাচাই করা, কিন্তু post লেখা/publish/staff add-এর পূর্ণ flow Atlas পেলে তবেই যাচাই করা যাবে |
+| 🔴 | Coolify-তে `MONGODB_URI` · `MONGODB_DB` · `SESSION_SECRET` সেট না করা পর্যন্ত `/blog` ও `/admin` runtime-এ error দেবে (build pass করবে, কারণ env check lazy — A14) |
 | 🟡 | Automated test নেই — শুধু `rules.md`-এর manual checklist |
 | 🟡 | Password reset flow নেই — admin হাতে reset করবেন |
 | 🟡 | Image upload নেই — cover image URL হাতে |
@@ -101,6 +107,7 @@ Phase 0 setup — dependency install, `lib/db.ts`, type, Zod schema, index, seed
 |---|---|
 | 2026-09-01 | Marketing site: PDF-এর ৭টা পরিবর্তন (orange CTA, services 14→8, hero eyebrow বাদ, promise line CTA-তে সরানো, trust bar থেকে n8n/stripe বাদ + Clay যোগ) |
 | 2026-09-01 | `/docs` তৈরি — admin panel ও blog CMS-এর জন্য |
+| 2026-10-02 | Deploy fix: `pnpm-lock.yaml` regenerate, `package-lock.json` বাদ (A13), env check lazy (A14), blog route dynamic (A15), `mongodb-memory-server` বাদ (A16)। `pnpm build` এখন env ছাড়াই pass করে |
 
 ## Notes for future sessions
 

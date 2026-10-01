@@ -25,6 +25,9 @@ updated: 2026-09-01
 | Inline `<script>` | JSX-এ কাঁচা `<script>` | `next/script` + `strategy` + `id` — নইলে hydration error |
 | Server Action parallel | client থেকে `Promise.all` | কাজ করবে না — client dispatcher **sequential**। একটাই action-এর ভেতরে parallel করো |
 | Form state | `useFormState` (react-dom) | **`useActionState`** (react) |
+| Package manager | `npm install` | **`pnpm install`** — deploy `--frozen-lockfile` চালায়; npm ব্যবহার করলে `pnpm-lock.yaml` পুরনো হয়ে deploy ভাঙে |
+| Env var পড়া | module scope-এ `process.env.X` যাচাই করে throw | ফাংশনের **ভেতরে** যাচাই — `next build` প্রতিটা route module import করে |
+| DB-নির্ভর page | ধরে নেওয়া যে static হবে | DB পড়লে `export const dynamic = "force-dynamic"`, নইলে build-time-এ prerender হয়ে DB খোঁজে |
 | Pending state | নিজে `useState` | `useActionState`-এর তৃতীয় return, বা `useFormStatus` |
 
 অন্যান্য যা মনে রাখতে হবে:

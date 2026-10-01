@@ -5,6 +5,13 @@ import { readingMinutes } from "@/lib/markdown";
 import { BlogFooter, BlogHeader } from "./_components/BlogChrome";
 import "./blog.css";
 
+/* Rendered per request rather than prerendered at build time. Prerendering
+   would make `next build` require a reachable database and credentials in
+   the build container — which the deployment image should not carry — and
+   would freeze the post list into the build. The query is a single indexed
+   read, so the cost is negligible. */
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Blog | RevopsTree",
   description:

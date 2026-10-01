@@ -12,9 +12,11 @@ const dateFormat = new Intl.DateTimeFormat("en-GB", {
   year: "numeric",
 });
 
-/* Deliberately no generateStaticParams: it would make `next build` require a
-   reachable database, and posts are published long after build time anyway.
-   Pages render on demand and savePost calls revalidatePath to refresh them. */
+/* Deliberately no generateStaticParams, and dynamic rendering: both would
+   make `next build` require a reachable database and credentials in the
+   build container. Posts are published long after build time anyway, so
+   each request reads the current version. */
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(props: PageProps<"/blog/[slug]">): Promise<Metadata> {
   const { slug } = await props.params;

@@ -3,15 +3,22 @@ import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 import type { SessionPayload, StaffRole } from "./types";
 
-const secret = process.env.SESSION_SECRET;
+/* Resolved per call rather than at module scope: `next build` imports route
+   modules, so throwing while this file is evaluated would fail the build on
+   any machine without the secret. Missing config should break the request,
+   not the build. */
+function signingKey(): Uint8Array {
+  const secret = process.env.SESSION_SECRET;
 
-if (!secret) {
-  throw new Error(
-    "SESSION_SECRET is not set. Generate one with `openssl rand -base64 32` and add it to .env.local.",
-  );
+  if (!secret) {
+    throw new Error(
+      "SESSION_SECRET is not set. Generate one with `openssl rand -base64 32`, " +
+        "then add it to .env.local locally and to the deployment's environment variables.",
+    );
+  }
+
+  return new TextEncoder().encode(secret);
 }
-
-const encodedKey = new TextEncoder().encode(secret);
 
 export const SESSION_COOKIE = "session";
 export const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
@@ -21,13 +28,13 @@ export async function encrypt(payload: SessionPayload): Promise<string> {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(payload.expiresAt)
-    .sign(encodedKey);
+    .sign(signingKey());
 }
 
 export async function decrypt(token: string | undefined): Promise<SessionPayload | null> {
   if (!token) return null;
   try {
-    const { payload } = await jwtVerify(token, encodedKey, { algorithms: ["HS256"] });
+    const { payload } = await jwtVerify(token, signingKey(), { algorithms: ["HS256"] });
     if (typeof payload.staffId !== "string") return null;
     if (payload.role !== "admin" && payload.role !== "editor") return null;
     return {
