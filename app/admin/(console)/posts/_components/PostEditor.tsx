@@ -13,33 +13,29 @@ export default function PostEditor({ post }: { post?: Post }) {
   const errors = state.ok ? undefined : state.fieldErrors;
 
   const [title, setTitle] = useState(post?.title ?? "");
-  const [slug, setSlug] = useState(post?.slug ?? "");
   const [content, setContent] = useState(post?.content ?? "");
   const [tab, setTab] = useState<"write" | "preview">("write");
-  const [preview, setPreview] = useState("");
-  const [previewing, setPreviewing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  /* Auto-fill the slug from the title only while creating, and only until the
-     author edits the slug themselves — renaming a published post's URL
-     silently would break its inbound links. */
-  const [slugTouched, setSlugTouched] = useState(Boolean(post));
+  /* The slug follows the title while creating, and stops the moment the
+     author types their own. An existing post starts with its slug already
+     "owned" — silently renaming a published URL would break inbound links.
+     Derived during render rather than synced in an effect, so there is no
+     extra render pass and no stale intermediate value. */
+  const [slugOverride, setSlugOverride] = useState<string | null>(post?.slug ?? null);
+  const slug = slugOverride ?? slugify(title);
 
-  useEffect(() => {
-    if (!slugTouched) setSlug(slugify(title));
-  }, [title, slugTouched]);
+  /* Keyed by the source it was produced from, so "is this preview current?"
+     is derived rather than tracked in a separate loading flag. */
+  const [rendered, setRendered] = useState<{ source: string; html: string } | null>(null);
+  const previewStale = rendered?.source !== content;
 
   useEffect(() => {
     if (tab !== "preview") return;
     let cancelled = false;
-    setPreviewing(true);
-    previewMarkdown(content)
-      .then((html) => {
-        if (!cancelled) setPreview(html);
-      })
-      .finally(() => {
-        if (!cancelled) setPreviewing(false);
-      });
+    previewMarkdown(content).then((html) => {
+      if (!cancelled) setRendered({ source: content, html });
+    });
     return () => {
       cancelled = true;
     };
@@ -119,11 +115,11 @@ export default function PostEditor({ post }: { post?: Post }) {
           </div>
 
           {tab === "preview" && (
-            <div className="a-preview">
-              {previewing && !preview ? (
+            <div className="a-preview" aria-busy={previewStale}>
+              {rendered ? (
+                <div dangerouslySetInnerHTML={{ __html: rendered.html }} />
+              ) : content.trim() ? (
                 <p className="a-help">Rendering…</p>
-              ) : preview ? (
-                <div dangerouslySetInnerHTML={{ __html: preview }} />
               ) : (
                 <p className="a-help">Nothing to preview yet.</p>
               )}
@@ -142,8 +138,7 @@ export default function PostEditor({ post }: { post?: Post }) {
               name="slug"
               value={slug}
               onChange={(event) => {
-                setSlugTouched(true);
-                setSlug(event.target.value);
+                setSlugOverride(event.target.value);
               }}
               maxLength={120}
               required

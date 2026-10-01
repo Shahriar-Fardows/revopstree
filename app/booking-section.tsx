@@ -1,33 +1,44 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Script from "next/script";
+import { useState } from "react";
+
+/* LeadConnector embeds, deliberately without form_embed.js.
+
+   That script was the reason neither widget appeared. Whichever iframe was
+   mounted, it rewrote it to:
+
+     opacity:0; visibility:hidden; pointer-events:none;
+     left:-9999px; position:absolute;
+
+   and never put anything visible in its place. It behaved the same way for
+   the calendar and the form, and loading it once instead of twice made no
+   difference. Both widget URLs render completely on their own in a plain
+   iframe, and the only thing the script otherwise contributes is postMessage
+   auto-resize, which the fixed heights in globals.css replace. So it is
+   simply not loaded.
+
+   The panes are also mounted one at a time. Keeping both in the DOM and
+   hiding the inactive one with display:none meant it was measured at zero
+   size. Switching tabs reloads that widget, which is cheap and predictable. */
+
+type Pane = "calendar" | "form";
+
+const CALENDAR_URL =
+  "https://api.leadconnectorhq.com/widget/bookings/new/appointmnet/for/faseeh/ejaz";
+const FORM_ID = "yyf6C2PISiv5skdPanOn";
+const FORM_URL = `https://api.leadconnectorhq.com/widget/form/${FORM_ID}`;
 
 export default function BookingSection() {
-  const [activeTab, setActiveTab] = useState<"calendar" | "form">("calendar");
-
-  useEffect(() => {
-    // Ensure LeadConnector form_embed script initializes on client mount & reload
-    if (typeof window !== "undefined") {
-      const scriptId = "leadconnector-form-script";
-      if (!document.getElementById(scriptId)) {
-        const script = document.createElement("script");
-        script.id = scriptId;
-        script.src = "https://link.msgsndr.com/js/form_embed.js";
-        script.async = true;
-        document.body.appendChild(script);
-      }
-    }
-  }, []);
+  const [activeTab, setActiveTab] = useState<Pane>("calendar");
 
   return (
     <section className="cta section" id="contact">
-      <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="lazyOnload" />
       <div className="cta-orbit" aria-hidden="true">
         <i />
         <i />
         <i />
       </div>
+
       <div className="shell">
         <span className="kicker light">YOUR NEXT SYSTEM STARTS HERE</span>
         <h2>
@@ -35,7 +46,8 @@ export default function BookingSection() {
           into a <em>revenue machine?</em>
         </h2>
         <p>
-          Book a free Revenue Leak Audit. We&apos;ll map the bottlenecks in your stack and show you exactly what to automate first.
+          Book a free Revenue Leak Audit. We&apos;ll map the bottlenecks in your stack and show you
+          exactly what to automate first.
         </p>
         <div className="promise">
           <strong>30 DAYS</strong>
@@ -43,14 +55,13 @@ export default function BookingSection() {
           TO A ZERO-LEAKAGE REVENUE ENGINE
         </div>
 
-        {/* Interactive Tab Switcher */}
-        <div className="booking-tab-bar" role="tablist" aria-label="Booking and Form Options">
+        <div className="booking-tab-bar" role="tablist" aria-label="Booking and form options">
           <button
             type="button"
             role="tab"
+            id="tab-calendar"
             aria-selected={activeTab === "calendar"}
             aria-controls="pane-calendar"
-            id="tab-calendar"
             className={`booking-tab-btn ${activeTab === "calendar" ? "active" : ""}`}
             onClick={() => setActiveTab("calendar")}
           >
@@ -59,9 +70,9 @@ export default function BookingSection() {
           <button
             type="button"
             role="tab"
+            id="tab-form"
             aria-selected={activeTab === "form"}
             aria-controls="pane-form"
-            id="tab-form"
             className={`booking-tab-btn ${activeTab === "form" ? "active" : ""}`}
             onClick={() => setActiveTab("form")}
           >
@@ -69,82 +80,71 @@ export default function BookingSection() {
           </button>
         </div>
 
-        {/* Embed Card Container - Both panes persist in DOM so scripts initialize on reload */}
         <div className="booking-embed-card">
-          <div
-            id="pane-calendar"
-            role="tabpanel"
-            aria-labelledby="tab-calendar"
-            className="booking-pane"
-            style={{ display: activeTab === "calendar" ? "flex" : "none" }}
-          >
-            <div className="pane-header">
-              <h3>Select Date &amp; Time for Your Free Audit</h3>
-              <a
-                href="https://api.leadconnectorhq.com/widget/bookings/new/appointmnet/for/faseeh/ejaz"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="external-link-btn"
-              >
-                Open Calendar in New Tab ↗
-              </a>
+          {activeTab === "calendar" ? (
+            <div
+              id="pane-calendar"
+              role="tabpanel"
+              aria-labelledby="tab-calendar"
+              className="booking-pane"
+            >
+              <div className="pane-header">
+                <h3>Select date &amp; time for your free audit</h3>
+                <a
+                  href={CALENDAR_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="external-link-btn"
+                >
+                  Open calendar in new tab ↗
+                </a>
+              </div>
+              <div className="iframe-wrapper iframe-wrapper-calendar">
+                <iframe
+                  key="calendar"
+                  src={CALENDAR_URL}
+                  id="msgsndr-calendar"
+                  title="RevopsTree booking calendar"
+                />
+              </div>
             </div>
-            <div className="iframe-wrapper">
-              <iframe
-                src="https://api.leadconnectorhq.com/widget/bookings/new/appointmnet/for/faseeh/ejaz"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  minHeight: "680px",
-                  border: "none",
-                  borderRadius: "12px",
-                  background: "#ffffff"
-                }}
-                id="msgsndr-calendar"
-                title="Revops Booking Calendar"
-              />
+          ) : (
+            <div
+              id="pane-form"
+              role="tabpanel"
+              aria-labelledby="tab-form"
+              className="booking-pane"
+            >
+              <div className="pane-header">
+                <h3>Submit your system audit details</h3>
+                <a
+                  href={FORM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="external-link-btn"
+                >
+                  Open form in new tab ↗
+                </a>
+              </div>
+              <div className="iframe-wrapper iframe-wrapper-form">
+                <iframe
+                  key="form"
+                  src={FORM_URL}
+                  id={`inline-${FORM_ID}`}
+                  title="RevopsTree audit form"
+                  data-layout="{'id':'INLINE'}"
+                  data-trigger-type="alwaysShow"
+                  data-activation-type="alwaysActivated"
+                  data-deactivation-type="neverDeactivate"
+                  data-form-name="Revops Form"
+                  data-layout-iframe-id={`inline-${FORM_ID}`}
+                  data-form-id={FORM_ID}
+                  data-cookie-consent="true"
+                  data-cookie-consent-provider="auto"
+                />
+              </div>
             </div>
-          </div>
-
-          <div
-            id="pane-form"
-            role="tabpanel"
-            aria-labelledby="tab-form"
-            className="booking-pane"
-            style={{ display: activeTab === "form" ? "flex" : "none" }}
-          >
-            <div className="pane-header">
-              <h3>Submit Your System Audit Details</h3>
-            </div>
-            <div className="iframe-wrapper">
-              <iframe
-                src="https://api.leadconnectorhq.com/widget/form/yyf6C2PISiv5skdPanOn"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  minHeight: "620px",
-                  border: "none",
-                  borderRadius: "12px",
-                  background: "#ffffff"
-                }}
-                id="inline-yyf6C2PISiv5skdPanOn"
-                data-layout="{'id':'INLINE'}"
-                data-trigger-type="alwaysShow"
-                data-trigger-value=""
-                data-activation-type="alwaysActivated"
-                data-activation-value=""
-                data-deactivation-type="neverDeactivate"
-                data-deactivation-value=""
-                data-form-name="Revops Form"
-                data-height="597"
-                data-layout-iframe-id="inline-yyf6C2PISiv5skdPanOn"
-                data-form-id="yyf6C2PISiv5skdPanOn"
-                data-cookie-consent="true"
-                data-cookie-consent-provider="auto"
-                title="Revops Form"
-              />
-            </div>
-          </div>
+          )}
         </div>
 
         <small className="cta-note">NO PITCH. JUST A CLEAR TECHNICAL ROADMAP.</small>
